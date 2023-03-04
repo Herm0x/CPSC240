@@ -1,0 +1,147 @@
+     1                                  extern printf
+     2                                  extern scanf
+     3                                  global pythagoras
+     4                                  
+     5                                  segment .data
+     6 00000000 456E74657220746865-     length1 db "Enter the length of the first side of the triangle: ", 0
+     6 00000009 206C656E677468206F-
+     6 00000012 662074686520666972-
+     6 0000001B 73742073696465206F-
+     6 00000024 662074686520747269-
+     6 0000002D 616E676C653A2000   
+     7 00000035 456E74657220746865-     length2 db "Enter the length of the second side of the triangle: ", 0
+     7 0000003E 206C656E677468206F-
+     7 00000047 662074686520736563-
+     7 00000050 6F6E64207369646520-
+     7 00000059 6F6620746865207472-
+     7 00000062 69616E676C653A2000 
+     8                                  
+     9 0000006B 256C6600                one_float db"%lf", 0
+    10                                  
+    11 0000006F 5468616E6B20796F75-     thankyou_float db "Thank you. You entered two sides: %0.8lf and %0.8lf", 10, 0
+    11 00000078 2E20596F7520656E74-
+    11 00000081 657265642074776F20-
+    11 0000008A 73696465733A202530-
+    11 00000093 2E386C6620616E6420-
+    11 0000009C 25302E386C660A00   
+    12 000000A4 546865206C656E6774-     hypot_float db "The length of the hypotenuse is %0.8lf", 0
+    12 000000AD 68206F662074686520-
+    12 000000B6 6879706F74656E7573-
+    12 000000BF 652069732025302E38-
+    12 000000C8 6C6600             
+    13                                  
+    14                                  segment .bss
+    15                                  
+    16                                  segment .text 
+    17                                  
+    18                                  pythagoras:
+    19                                  ;Prolog ===== Insurance for any caller of this assembly module ========================================================
+    20                                  ;Any future program calling this module that the data in the caller's GPRs will not be modified.
+    21                                  
+    22 00000000 55                      push rbp
+    23 00000001 4889E5                  mov  rbp,rsp
+    24 00000004 57                      push rdi                                                    ;Backup rdi
+    25 00000005 56                      push rsi                                                    ;Backup rsi
+    26 00000006 52                      push rdx                                                    ;Backup rdx
+    27 00000007 51                      push rcx                                                    ;Backup rcx
+    28 00000008 4150                    push r8                                                     ;Backup r8
+    29 0000000A 4151                    push r9                                                     ;Backup r9
+    30 0000000C 4152                    push r10                                                    ;Backup r10
+    31 0000000E 4153                    push r11                                                    ;Backup r11
+    32 00000010 4154                    push r12                                                    ;Backup r12
+    33 00000012 4155                    push r13                                                    ;Backup r13
+    34 00000014 4156                    push r14                                                    ;Backup r14
+    35 00000016 4157                    push r15                                                    ;Backup r15
+    36 00000018 53                      push rbx                                                    ;Backup rbx
+    37 00000019 9C                      pushf                                                       ;Backup rflags
+    38                                  
+    39 0000001A 6A00                    push qword 0
+    40                                  
+    41                                  
+    42                                  ;=========== Display length input for first side ========================================================================
+    43 0000001C 6A00                    push qword 0                                                ;Must be used everytime printf and scanf is called
+    44 0000001E B800000000              mov rax, 0
+    45 00000023 48BF-                   mov rdi, length1
+    45 00000025 [0000000000000000] 
+    46 0000002D E8(00000000)            call printf
+    47 00000032 58                      pop rax                                                     ;Used at the end when using 'push' 
+    48                                  
+    49 00000033 6A00                    push qword 0                                                ;Must be used everytime printf and scanf is called
+    50 00000035 B800000000              mov rax, 0
+    51 0000003A 48BF-                   mov rdi, one_float
+    51 0000003C [6B00000000000000] 
+    52 00000044 4889E6                  mov rsi, rsp
+    53 00000047 E8(00000000)            call scanf
+    54 0000004C F2440F101424            movsd xmm10, [rsp]
+    55 00000052 58                      pop rax                                                     ;Used at the end when using 'push'
+    56                                  
+    57                                  ;=========== Display length input for second side ========================================================================
+    58 00000053 6A00                    push qword 0                                                ;Must be used everytime printf and scanf is called
+    59 00000055 B800000000              mov rax, 0
+    60 0000005A 48BF-                   mov rdi, length2
+    60 0000005C [3500000000000000] 
+    61 00000064 E8(00000000)            call printf
+    62 00000069 58                      pop rax                                                     ;Used at the end when using 'push'
+    63                                  
+    64 0000006A 6A00                    push qword 0                                                ;Must be used everytime printf and scanf is called
+    65 0000006C B800000000              mov rax, 0
+    66 00000071 48BF-                   mov rdi, one_float
+    66 00000073 [6B00000000000000] 
+    67 0000007B 4889E6                  mov rsi, rsp
+    68 0000007E E8(00000000)            call scanf
+    69 00000083 F2440F101C24            movsd xmm11, [rsp]
+    70 00000089 58                      pop rax                                                     ;Used at the end when using 'push'
+    71                                  
+    72                                  
+    73 0000008A 6A00                    push qword 0
+    74                                  
+    75                                  ;=========== Display both inputs =========================================================================================
+    76 0000008C B802000000              mov rax, 2
+    77 00000091 48BF-                   mov rdi, thankyou_float
+    77 00000093 [6F00000000000000] 
+    78 0000009B F2410F10C2              movsd xmm0, xmm10
+    79 000000A0 F2410F10CB              movsd xmm1, xmm11    
+    80 000000A5 E8(00000000)            call printf
+    81 000000AA 58                      pop rax
+    82                                  
+    83                                  
+    84                                  ;=========== Find the hypotenuse =========================================================================================
+    85 000000AB F2450F59D2              mulsd xmm10, xmm10
+    86 000000B0 F2450F59DB              mulsd xmm11, xmm11 
+    87 000000B5 F2450F58DA              addsd xmm11, xmm10 
+    88 000000BA F2450F51FB              sqrtsd xmm15, xmm11
+    89                                  
+    90                                  ;======= Displaying the hypotenuse =======================================================================================
+    91 000000BF 6A00                    push qword 0
+    92 000000C1 B801000000              mov rax, 1
+    93 000000C6 48BF-                   mov rdi, hypot_float 
+    93 000000C8 [A400000000000000] 
+    94 000000D0 F2410F10C7              movsd xmm0, xmm15
+    95 000000D5 E8(00000000)            call printf
+    96 000000DA 58                      pop rax
+    97                                  
+    98                                  ;========= Ending the program =============================================================================================
+    99                                          
+   100 000000DB 58                      pop rax                                                     ;Used after the first qword 0 at the beginning of the program
+   101                                  
+   102 000000DC F2410F10C7              movsd xmm0, xmm15
+   103                                  
+   104                                  ;===== Restore original values to integer registers =======================================================================
+   105 000000E1 9D                      popf                                                        ;Restore rflags
+   106 000000E2 5B                      pop rbx                                                     ;Restore rbx
+   107 000000E3 415F                    pop r15                                                     ;Restore r15
+   108 000000E5 415E                    pop r14                                                     ;Restore r14
+   109 000000E7 415D                    pop r13                                                     ;Restore r13
+   110 000000E9 415C                    pop r12                                                     ;Restore r12
+   111 000000EB 415B                    pop r11                                                     ;Restore r11
+   112 000000ED 415A                    pop r10                                                     ;Restore r10
+   113 000000EF 4159                    pop r9                                                      ;Restore r9
+   114 000000F1 4158                    pop r8                                                      ;Restore r8
+   115 000000F3 59                      pop rcx                                                     ;Restore rcx
+   116 000000F4 5A                      pop rdx                                                     ;Restore rdx
+   117 000000F5 5E                      pop rsi                                                     ;Restore rsi
+   118 000000F6 5F                      pop rdi                                                     ;Restore rdi
+   119 000000F7 5D                      pop rbp                                                     ;Restore rbp
+   120                                  
+   121                                  
+   122 000000F8 C3                      ret
